@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Check List Equipos · Exologística Nike</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0f1a;--panel:#0f1623;--panel2:#161e2e;--border:#1c2a40;--nike:#FF6B00;--green:#22c55e;--red:#ef4444;--yellow:#f59e0b;--text:#e2e8f0;--muted:#64748b;--muted2:#94a3b8;--r:10px}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;font-size:13px}
+.hdr{background:var(--panel);border-bottom:3px solid var(--nike);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.hdr-l{display:flex;align-items:center;gap:14px}
+.hdr-logo{height:38px;border-radius:8px;background:#fff;padding:4px 10px;object-fit:contain}
+.hdr-t{font-size:15px;font-weight:800;letter-spacing:.3px}
+.hdr-s{font-size:10px;color:var(--muted2);margin-top:1px;text-transform:uppercase;letter-spacing:.6px}
+.hdr-r{display:flex;gap:8px;align-items:center}
+.btn{padding:7px 15px;border-radius:7px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s}
+.btn-p{background:var(--nike);color:#fff}.btn-p:hover{background:#e05e00}
+.btn-o{background:transparent;color:var(--muted2);border:1px solid var(--border)}.btn-o:hover{border-color:var(--nike);color:var(--nike)}
+.btn-sm{padding:5px 11px;font-size:11px}
+
+.tabs{display:flex;gap:2px;padding:0 20px;background:var(--panel2);border-bottom:1px solid var(--border)}
+.tab{padding:11px 22px;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:.15s}
+.tab:hover{color:var(--text)}.tab.active{color:var(--nike);border-bottom-color:var(--nike)}
+
+.main{padding:20px 24px;max-width:1400px;margin:0 auto}
+
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px;background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px}
+.flt-label{font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px;margin-right:2px}
+select,input[type=date]{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:7px;padding:5px 10px;font-size:12px;font-family:inherit}
+select:focus,input:focus{outline:none;border-color:var(--nike)}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:18px}
+.sc{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px}
+.sc-l{font-size:9px;color:var(--muted2);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.sc-v{font-size:22px;font-weight:800;line-height:1}
+.sc-s{font-size:10px;color:var(--muted);margin-top:3px}
+.cok{border-left:4px solid var(--green)}.cbad{border-left:4px solid var(--red)}.cwrn{border-left:4px solid var(--yellow)}
+
+.tw{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px}
+.th2{padding:11px 15px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
+.th2 h3{font-size:13px;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{background:var(--panel2);padding:7px 10px;text-align:center;font-size:8px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:7px 10px;text-align:center;border-bottom:1px solid #1a2640}
+tr:last-child td{border-bottom:none}tr:hover td{background:rgba(255,107,0,.04)}
+td.tl{text-align:left}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.bok{background:rgba(34,197,94,.13);color:var(--green)}
+.bbad{background:rgba(239,68,68,.13);color:var(--red)}
+.bwrn{background:rgba(245,158,11,.13);color:var(--yellow)}
+.bna{background:rgba(100,116,139,.13);color:var(--muted2)}
+
+.no-data{padding:60px;text-align:center;color:var(--muted);font-size:13px}
+.ldr-wrap{display:flex;align-items:center;justify-content:center;padding:60px;gap:12px;color:var(--muted2)}
+.spin{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--nike);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.check-icon{font-size:14px}
+.alert-row td{background:rgba(239,68,68,.05)!important}
+
+.semaforo{display:flex;gap:6px;align-items:center}
+.sem{width:12px;height:12px;border-radius:50%}
+.sem-ok{background:var(--green)}.sem-bad{background:var(--red)}.sem-na{background:var(--muted)}
+
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-l">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAA1CAYAAADMksMUAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH6QUeBBcpNUoMLQAAACFJREFUaN7twTEBAAAAwqD1T20LL6AAAAAAAAAAAAAA4N8AKvAAAVx7QMIAAAAASUVORK5CYII=" alt="Exo" class="hdr-logo" style="height:36px">
+    <div>
+      <div class="hdr-t">CHECK LIST EQUIPOS</div>
+      <div class="hdr-s">Exologística · Operación Nike · H&S</div>
+    </div>
+  </div>
+  <div class="hdr-r">
+    <span id="lastUpdate" style="font-size:10px;color:var(--muted2)"></span>
+    <button class="btn btn-o btn-sm" onclick="loadAll()">↺ Actualizar</button>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" id="tab-all" onclick="switchTab('all')">Todos</div>
+  <div class="tab" id="tab-reach" onclick="switchTab('reach')">REACH</div>
+  <div class="tab" id="tab-k1" onclick="switchTab('k1')">K1 Order Picker</div>
+  <div class="tab" id="tab-zorras" onclick="switchTab('zorras')">Zorras</div>
+  <div class="tab" id="tab-alertas" onclick="switchTab('alertas')">⚠️ Alertas</div>
+</div>
+
+<div class="main" id="main">
+  <div class="ldr-wrap"><div class="spin"></div><span>Cargando datos...</span></div>
+</div>
+
+<script>
+// ── SHEETS CSV URLS ──────────────────────────────────────────────────────────
+var SHEETS = [
+  {
+    name: 'REACH',
+    tipo: 'reach',
+    maquinas: ['1167','938'],
+    url: 'https://docs.google.com/spreadsheets/d/1h7nMZEJdLoQFV9tYegdXk0eiwHz8awJoCiuPfjNDmug/export?format=csv&gid=2021251892',
+    puntos: ['Funcionan los frenos','Ausencia de pérdida de líquidos','Funciona parada de emergencia','Funciona pedal de hombre montado','Funciona elevación e inclinación de uñas','Estado y carga del extintor','Funciona scanner'],
+    noExcluyentes: ['Estado y carga del extintor']
+  },
+  {
+    name: 'K1 Order Picker',
+    tipo: 'k1',
+    maquinas: ['1186','1187','1189','1352','1367'],
+    url: 'https://docs.google.com/spreadsheets/d/1uLG1k36j_7yDaIsRgg0nIVfRGoSbf9b1iQVVE4d3h40/export?format=csv&gid=208167384',
+    puntos: ['Funcionan los frenos','Ausencia de pérdida de líquidos','Funciona parada de emergencia','Funciona resorte del timón','Funciona elevación de uñas','Funciona scanner'],
+    noExcluyentes: []
+  },
+  {
+    name: 'Zorras',
+    tipo: 'zorras',
+    maquinas: ['998','1158'],
+    url: 'https://docs.google.com/spreadsheets/d/11x_Ns_PsfiknwQSu3y4hurBfHWwx4AxnVuHekgcsiDQ/export?format=csv&gid=247386779',
+    puntos: ['Funcionan los frenos','Ausencia de pérdida de líquidos','Funciona parada de emergencia','Funciona resorte del timón','Funciona elevación de uñas'],
+    noExcluyentes: []
+  }
+];
+
+var ALL_DATA = [];
+var CURRENT_TAB = 'all';
+var FILTER_FECHA = '';
+var FILTER_MAQUINA = 'TODAS';
+var FILTER_TURNO = 'TODOS';
+
+// ── CSV PARSER ───────────────────────────────────────────────────────────────
+function parseCSV(text) {
+  var lines = text.split('\n');
+  if (!lines.length) return [];
+  var headers = parseCSVLine(lines[0]);
+  var rows = [];
+  for (var i = 1; i < lines.length; i++) {
+    var line = lines[i].trim();
+    if (!line) continue;
+    var cols = parseCSVLine(line);
+    var obj = {};
+    headers.forEach(function(h, idx) { obj[h.trim()] = (cols[idx] || '').trim(); });
+    rows.push(obj);
+  }
+  return rows;
+}
+
+function parseCSVLine(line) {
+  var result = [], cur = '', inQ = false;
+  for (var i = 0; i < line.length; i++) {
+    var c = line[i];
+    if (c === '"') { inQ = !inQ; }
+    else if (c === ',' && !inQ) { result.push(cur); cur = ''; }
+    else { cur += c; }
+  }
+  result.push(cur);
+  return result;
+}
+
+function fmtFecha(ts) {
+  if (!ts) return '—';
+  // Format: "29/05/2026 10:30:00" or similar
+  var parts = ts.split(' ');
+  return parts[0] || ts;
+}
+
+function fmtHora(ts) {
+  if (!ts) return '—';
+  var parts = ts.split(' ');
+  return parts[1] ? parts[1].slice(0,5) : '—';
+}
+
+function isBad(val) {
+  if (!val) return false;
+  var v = val.toLowerCase();
+  return v.includes('no') && !v.includes('no ok') || v === '❌ no' || v.trim() === 'No';
+}
+
+function isOk(val) {
+  if (!val) return false;
+  var v = val.toLowerCase().trim();
+  return v.includes('sí') || v.includes('si') || v.includes('ok') || v === '✅ sí' || v === '✅ ok';
+}
+
+function valBadge(val, noExcl) {
+  if (!val || val === '—') return '<span class="badge bna">—</span>';
+  if (isOk(val)) return '<span class="badge bok">✅ OK</span>';
+  if (isBad(val)) return noExcl ?
+    '<span class="badge bwrn">⚠ No OK</span>' :
+    '<span class="badge bbad">❌ NO</span>';
+  return '<span class="badge bna">'+val+'</span>';
+}
+
+function tieneFalla(row, puntos, noExcluyentes) {
+  return puntos.some(function(p) {
+    var val = row[p] || '';
+    var esNE = noExcluyentes.indexOf(p) >= 0;
+    return !esNE && isBad(val);
+  });
+}
+
+// ── LOAD DATA ────────────────────────────────────────────────────────────────
+async function loadAll() {
+  document.getElementById('main').innerHTML = '<div class="ldr-wrap"><div class="spin"></div><span>Cargando datos...</span></div>';
+  ALL_DATA = [];
+
+  var promises = SHEETS.map(async function(sheet) {
+    try {
+      var r = await fetch(sheet.url);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      var text = await r.text();
+      var rows = parseCSV(text);
+      rows.forEach(function(row) {
+        row._tipo = sheet.tipo;
+        row._sheetName = sheet.name;
+        row._puntos = sheet.puntos;
+        row._noExcl = sheet.noExcluyentes;
+        row._falla = tieneFalla(row, sheet.puntos, sheet.noExcluyentes);
+      });
+      ALL_DATA = ALL_DATA.concat(rows);
+    } catch(e) {
+      console.error('Error loading ' + sheet.name, e);
+    }
+  });
+
+  await Promise.all(promises);
+
+  // Sort by timestamp desc
+  ALL_DATA.sort(function(a, b) {
+    return (b['Marca temporal'] || '').localeCompare(a['Marca temporal'] || '');
+  });
+
+  document.getElementById('lastUpdate').textContent = 'Actualizado: ' + new Date().toLocaleTimeString('es-AR');
+  render();
+}
+
+// ── SWITCH TAB ───────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  CURRENT_TAB = tab;
+  ['all','reach','k1','zorras','alertas'].forEach(function(t) {
+    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+  });
+  render();
+}
+
+// ── FILTER DATA ───────────────────────────────────────────────────────────────
+function getFiltered() {
+  return ALL_DATA.filter(function(r) {
+    if (CURRENT_TAB !== 'all' && CURRENT_TAB !== 'alertas' && r._tipo !== CURRENT_TAB) return false;
+    if (CURRENT_TAB === 'alertas' && !r._falla) return false;
+    if (FILTER_MAQUINA !== 'TODAS' && (r['  N° de Máquina  '] || '').trim() !== FILTER_MAQUINA) return false;
+    if (FILTER_TURNO !== 'TODOS' && (r['Turno'] || '') !== FILTER_TURNO) return false;
+    if (FILTER_FECHA) {
+      var ts = r['Marca temporal'] || '';
+      // ts format: dd/mm/yyyy hh:mm:ss
+      var datePart = ts.split(' ')[0];
+      if (datePart) {
+        var parts = datePart.split('/');
+        if (parts.length === 3) {
+          var isoDate = parts[2] + '-' + parts[1].padStart(2,'0') + '-' + parts[0].padStart(2,'0');
+          if (isoDate !== FILTER_FECHA) return false;
+        }
+      }
+    }
+    return true;
+  });
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render() {
+  var filtered = getFiltered();
+  var html = '';
+
+  // ── Filtros ──
+  var maquinas = ['TODAS'];
+  ALL_DATA.forEach(function(r) {
+    var m = (r['  N° de Máquina  '] || '').trim();
+    if (m && maquinas.indexOf(m) < 0) maquinas.push(m);
+  });
+  maquinas.sort();
+
+  html += '<div class="filters">';
+  html += '<span class="flt-label">Fecha</span>';
+  html += '<input type="date" value="'+FILTER_FECHA+'" onchange="FILTER_FECHA=this.value;render()">';
+  html += '<span class="flt-label" style="margin-left:8px">Máquina</span>';
+  html += '<select onchange="FILTER_MAQUINA=this.value;render()">';
+  maquinas.forEach(function(m) { html += '<option value="'+m+'"'+(FILTER_MAQUINA===m?' selected':'')+'>'+m+'</option>'; });
+  html += '</select>';
+  html += '<span class="flt-label" style="margin-left:8px">Turno</span>';
+  html += '<select onchange="FILTER_TURNO=this.value;render()">';
+  ['TODOS','Mañana (M)','Tarde (T)','Noche (N)'].forEach(function(t) {
+    html += '<option value="'+t+'"'+(FILTER_TURNO===t?' selected':'')+'>'+t+'</option>';
+  });
+  html += '</select>';
+  if (FILTER_FECHA || FILTER_MAQUINA !== 'TODAS' || FILTER_TURNO !== 'TODOS') {
+    html += '<button class="btn btn-o btn-sm" onclick="FILTER_FECHA=\'\';FILTER_MAQUINA=\'TODAS\';FILTER_TURNO=\'TODOS\';render()">✕ Limpiar</button>';
+  }
+  html += '</div>';
+
+  // ── KPIs ──
+  var total = filtered.length;
+  var fallas = filtered.filter(function(r) { return r._falla; }).length;
+  var ok = total - fallas;
+  var hoy = new Date().toISOString().slice(0,10);
+  var hoyRows = filtered.filter(function(r) {
+    var ts = r['Marca temporal'] || '';
+    var parts = ts.split(' ')[0].split('/');
+    if (parts.length === 3) {
+      var iso = parts[2]+'-'+parts[1].padStart(2,'0')+'-'+parts[0].padStart(2,'0');
+      return iso === hoy;
+    }
+    return false;
+  });
+
+  html += '<div class="stats">';
+  html += kpi('Total registros', total, '');
+  html += kpi('Hoy', hoyRows.length, new Date().toLocaleDateString('es-AR'));
+  html += kpi('✅ Sin fallas', ok, '', ok===total&&total>0?'cok':'');
+  html += kpi('⚠️ Con fallas', fallas, 'puntos críticos en NO', fallas>0?'cbad':'cok');
+  html += '</div>';
+
+  if (!total) {
+    html += '<div class="no-data">Sin registros'+(CURRENT_TAB==='alertas'?' — No hay alertas activas 👍':'')+'</div>';
+    document.getElementById('main').innerHTML = html;
+    return;
+  }
+
+  // ── Tabla ──
+  var tipoLabel = {all:'Todos los equipos', reach:'REACH', k1:'K1 Order Picker', zorras:'Zorras', alertas:'⚠️ Alertas — Puntos críticos en NO'};
+
+  html += '<div class="tw"><div class="th2"><h3>'+tipoLabel[CURRENT_TAB]+' ('+filtered.length+' registros)</h3></div>';
+  html += '<div style="overflow-x:auto"><table><thead><tr>';
+  html += '<th>Fecha</th><th>Hora</th><th>Maquinista</th><th>Máquina</th><th>Turno</th>';
+  html += '<th>Frenos</th><th>Líquidos</th><th>P. Emergencia</th>';
+
+  // Columnas variables según tab
+  if (CURRENT_TAB === 'reach' || CURRENT_TAB === 'all' || CURRENT_TAB === 'alertas') {
+    html += '<th>Pedal HM</th><th>Elevación</th><th>Extintor*</th>';
+  } else if (CURRENT_TAB === 'k1') {
+    html += '<th>Resorte timón</th><th>Elevación</th>';
+  } else if (CURRENT_TAB === 'zorras') {
+    html += '<th>Resorte timón</th><th>Elevación</th>';
+  }
+  if (CURRENT_TAB !== 'zorras') {
+    html += '<th>Scanner</th><th>N° Scanner</th>';
+  }
+  html += '<th>Observaciones</th><th>Estado</th>';
+  html += '</tr></thead><tbody>';
+
+  filtered.forEach(function(r) {
+    var ts = r['Marca temporal'] || '';
+    var fecha = fmtFecha(ts);
+    var hora = fmtHora(ts);
+    var maquinista = r['Nombre del maquinista'] || '—';
+    var maquina = (r['  N° de Máquina  '] || '').trim() || '—';
+    var turno = r['Turno'] || '—';
+    var obs = r[' Observaciones / Anomalías'] || r['Observaciones / Anomalías'] || '—';
+    var falla = r._falla;
+    var tipo = r._tipo;
+    var noExcl = r._noExcl || [];
+
+    var rowClass = falla ? ' class="alert-row"' : '';
+    html += '<tr'+rowClass+'>';
+    html += '<td><strong>'+fecha+'</strong></td>';
+    html += '<td>'+hora+'</td>';
+    html += '<td class="tl">'+maquinista+'</td>';
+    html += '<td><strong>'+maquina+'</strong></td>';
+    html += '<td>'+turno+'</td>';
+
+    // Puntos comunes
+    html += '<td>'+valBadge(r['Funcionan los frenos'], false)+'</td>';
+    html += '<td>'+valBadge(r['Ausencia de pérdida de líquidos'], false)+'</td>';
+    html += '<td>'+valBadge(r[' Funciona parada de emergencia  '] || r['Funciona parada de emergencia'], false)+'</td>';
+
+    if (tipo === 'reach') {
+      html += '<td>'+valBadge(r[' Funciona pedal de hombre montado  '] || r['Funciona pedal de hombre montado'], false)+'</td>';
+      html += '<td>'+valBadge(r[' Funciona elevación e inclinación de uñas  '] || r['Funciona elevación e inclinación de uñas'], false)+'</td>';
+      html += '<td>'+valBadge(r['  Estado y carga del extintor  '] || r['Estado y carga del extintor'], true)+'</td>';
+      html += '<td>'+valBadge(r['Funciona scanner'], false)+'</td>';
+      html += '<td>'+(r[' Número de Scanner  '] || r['Número de Scanner'] || '—')+'</td>';
+    } else if (tipo === 'k1') {
+      html += '<td>'+valBadge(r['Funciona resorte del timón'] || r[' Funciona resorte del timón  '], false)+'</td>';
+      html += '<td>'+valBadge(r['Funciona elevación de uñas'] || r[' Funciona elevación  de uñas  '], false)+'</td>';
+      html += '<td>'+valBadge(r['Funciona scanner'], false)+'</td>';
+      html += '<td>'+(r[' Número de Scanner  '] || r['Número de Scanner'] || '—')+'</td>';
+    } else if (tipo === 'zorras') {
+      html += '<td>'+valBadge(r['Funciona resorte del timón'] || r[' Funciona resorte del timón  '], false)+'</td>';
+      html += '<td>'+valBadge(r['Funciona elevación de uñas'] || r[' Funciona elevación  de uñas  '], false)+'</td>';
+    } else {
+      // all / alertas — mostrar según tipo
+      if (tipo === 'reach') {
+        html += '<td>'+valBadge(r[' Funciona pedal de hombre montado  '] || r['Funciona pedal de hombre montado'], false)+'</td>';
+        html += '<td>'+valBadge(r[' Funciona elevación e inclinación de uñas  '] || r['Funciona elevación e inclinación de uñas'], false)+'</td>';
+        html += '<td>'+valBadge(r['  Estado y carga del extintor  '] || r['Estado y carga del extintor'], true)+'</td>';
+      } else {
+        html += '<td>'+valBadge(r['Funciona resorte del timón'] || r[' Funciona resorte del timón  '], false)+'</td>';
+        html += '<td>'+valBadge(r['Funciona elevación de uñas'] || r[' Funciona elevación  de uñas  '], false)+'</td>';
+        html += '<td>—</td>';
+      }
+      html += '<td>'+valBadge(r['Funciona scanner'], false)+'</td>';
+      html += '<td>'+(r[' Número de Scanner  '] || r['Número de Scanner'] || '—')+'</td>';
+    }
+
+    html += '<td class="tl" style="font-size:10px;max-width:180px;white-space:normal">'+(obs!=='—'?'<span style="color:var(--yellow)">⚠ '+obs+'</span>':'—')+'</td>';
+    html += '<td>'+(falla?'<span class="badge bbad">⚠ FALLA</span>':'<span class="badge bok">✅ OK</span>')+'</td>';
+    html += '</tr>';
+  });
+
+  html += '</tbody></table></div></div>';
+  html += '<div style="font-size:10px;color:var(--muted);margin-top:4px">* Extintor: No Excluyente — la máquina puede operar pero debe gestionarse</div>';
+
+  document.getElementById('main').innerHTML = html;
+}
+
+function kpi(label, val, sub, cls) {
+  return '<div class="sc '+(cls||'')+'">'+
+    '<div class="sc-l">'+label+'</div>'+
+    '<div class="sc-v">'+val+'</div>'+
+    (sub?'<div class="sc-s">'+sub+'</div>':'')+
+    '</div>';
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+loadAll();
+// Auto-refresh every 2 minutes
+setInterval(loadAll, 120000);
+</script>
+</body>
+</html>
