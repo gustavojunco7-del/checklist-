@@ -111,7 +111,7 @@ var SHEETS = [
     tipo: 'k1',
     maquinas: ['1186','1187','1189','1352','1367'],
     url: 'https://docs.google.com/spreadsheets/d/1uLG1k36j_7yDaIsRgg0nIVfRGoSbf9b1iQVVE4d3h40/export?format=csv&gid=208167384',
-    puntos: ['Funcionan los frenos','Ausencia de pérdida de líquidos','Funciona parada de emergencia','Funciona resorte del timón','Funciona elevación de uñas','Funciona scanner'],
+    puntos: ['Funcionan los frenos','Pérdida de liquidos','Funciona parada de emergencia','Funciona resorte del timón','Funciona elevación de uñas','Funciona scanner'],
     noExcluyentes: []
   },
   {
@@ -119,7 +119,7 @@ var SHEETS = [
     tipo: 'zorras',
     maquinas: ['998','1158'],
     url: 'https://docs.google.com/spreadsheets/d/11x_Ns_PsfiknwQSu3y4hurBfHWwx4AxnVuHekgcsiDQ/export?format=csv&gid=247386779',
-    puntos: ['Funcionan los frenos','Ausencia de pérdida de líquidos','Funciona parada de emergencia','Funciona resorte del timón','Funciona elevación de uñas'],
+    puntos: ['Funcionan los frenos','Pérdida de líquidos','Funciona parada de emergencia','Funciona resorte del timón','Funciona elevación de uñas'],
     noExcluyentes: []
   }
 ];
@@ -375,7 +375,15 @@ function render() {
 
     // Puntos comunes
     html += '<td>'+valBadge(r['Funcionan los frenos'], false)+'</td>';
-    html += '<td>'+valBadge(r['Ausencia de pérdida de líquidos'] || r[' Ausencia de pérdida de líquidos '] || r['Ausencia de perdida de liquidos'] || r[' Ausencia de perdida de liquidos '], false)+'</td>';
+    html += '<td>'+valBadge(
+      r['Ausencia de pérdida de líquidos'] ||
+      r['Pérdida de liquidos'] ||
+      r['Pérdida de líquidos'] ||
+      r['Perdida de liquidos'] ||
+      r[' Ausencia de pérdida de líquidos '] ||
+      r[' Pérdida de liquidos '] ||
+      r[' Pérdida de líquidos '],
+    false)+'</td>';
     html += '<td>'+valBadge(r[' Funciona parada de emergencia  '] || r['Funciona parada de emergencia'], false)+'</td>';
 
     if (tipo === 'reach') {
