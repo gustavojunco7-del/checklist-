@@ -415,7 +415,7 @@ function render() {
       html += '<td>'+(r['Número de Scanner'] || r[' Número de Scanner  '] || r['Numero de Scanner'] || '—')+'</td>';
     }
 
-    html += '<td>'+(r['Estado de batería (porcentaje)'] || r['Estado de bateria (porcentaje)'] || '—')+'</td>';
+    html += '<td>'+(r['Estado de bateria (porcentaje%)'] || r['Estado de batería (porcentaje%)'] || r['Estado de batería (porcentaje)'] || r['Estado de bateria (porcentaje)'] || '—')+'</td>';
     html += '<td class="tl" style="font-size:10px;max-width:180px;white-space:normal">'+(obs!=='—'?'<span style="color:var(--yellow)">⚠ '+obs+'</span>':'—')+'</td>';
     html += '<td>'+(falla?'<span class="badge bbad">⚠ FALLA</span>':'<span class="badge bok">✅ OK</span>')+'</td>';
     html += '</tr>';
