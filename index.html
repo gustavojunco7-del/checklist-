@@ -336,12 +336,14 @@ function render() {
 
   html += '<div class="tw"><div class="th2"><h3>'+tipoLabel[CURRENT_TAB]+' ('+filtered.length+' registros)</h3></div>';
   html += '<div style="overflow-x:auto"><table><thead><tr>';
-  html += '<th>Fecha</th><th>Hora</th><th>Maquinista</th><th>Máquina</th><th>Turno</th>';
+  html += '<th>Fecha</th><th>Hora</th><th>Maquinista</th><th>Máquina</th><th>Tipo</th><th>Turno</th>';
   html += '<th>Frenos</th><th>Líquidos</th><th>P. Emergencia</th>';
 
   // Columnas variables según tab
-  if (CURRENT_TAB === 'reach' || CURRENT_TAB === 'all' || CURRENT_TAB === 'alertas') {
+  if (CURRENT_TAB === 'reach') {
     html += '<th>Pedal HM</th><th>Elevación</th><th>Extintor*</th>';
+  } else if (CURRENT_TAB === 'all' || CURRENT_TAB === 'alertas') {
+    html += '<th>Pedal HM / Resorte timón</th><th>Elevación</th><th>Extintor* (solo REACH)</th>';
   } else if (CURRENT_TAB === 'k1') {
     html += '<th>Resorte timón</th><th>Elevación</th>';
   } else if (CURRENT_TAB === 'zorras') {
@@ -371,6 +373,7 @@ function render() {
     html += '<td>'+hora+'</td>';
     html += '<td class="tl">'+maquinista+'</td>';
     html += '<td><strong>'+maquina+'</strong></td>';
+    html += '<td><span class="badge bna">'+(r._sheetName || '—')+'</span></td>';
     html += '<td>'+turno+'</td>';
 
     // Puntos comunes
@@ -386,23 +389,22 @@ function render() {
     false)+'</td>';
     html += '<td>'+valBadge(r[' Funciona parada de emergencia  '] || r['Funciona parada de emergencia'], false)+'</td>';
 
-    if (tipo === 'reach') {
+    if (CURRENT_TAB === 'reach') {
       html += '<td>'+valBadge(r[' Funciona pedal de hombre montado  '] || r['Funciona pedal de hombre montado'], false)+'</td>';
       html += '<td>'+valBadge(r[' Funciona elevación e inclinación de uñas  '] || r['Funciona elevación e inclinación de uñas'], false)+'</td>';
       html += '<td>'+valBadge(r['Estado y carga del extintor'] || r['  Estado y carga del extintor  '] || r[' Estado y carga del extintor '], true)+'</td>';
       html += '<td>'+valBadge(r['Funciona scanner'] || r[' Funciona scanner '], false)+'</td>';
       html += '<td>'+(r['Número de Scanner'] || r[' Número de Scanner  '] || r['Numero de Scanner'] || '—')+'</td>';
-    } else if (tipo === 'k1') {
+    } else if (CURRENT_TAB === 'k1') {
       html += '<td>'+valBadge(r['Funciona resorte del timón'] || r[' Funciona resorte del timón  '], false)+'</td>';
       html += '<td>'+valBadge(r['Funciona elevación de uñas'] || r[' Funciona elevación  de uñas  '], false)+'</td>';
       html += '<td>'+valBadge(r['Funciona scanner'] || r[' Funciona scanner '], false)+'</td>';
       html += '<td>'+(r['Número de Scanner'] || r[' Número de Scanner  '] || r['Numero de Scanner'] || '—')+'</td>';
-    } else if (tipo === 'zorras') {
+    } else if (CURRENT_TAB === 'zorras') {
       html += '<td>'+valBadge(r['Funciona resorte del timón'] || r[' Funciona resorte del timón  '], false)+'</td>';
       html += '<td>'+valBadge(r['Funciona elevación de uñas'] || r[' Funciona elevación  de uñas  '], false)+'</td>';
-      html += '<td>—</td><td>—</td><td>—</td>';
     } else {
-      // all / alertas — mostrar según tipo
+      // all / alertas — columnas fijas (5: mid x3 + scanner x2), contenido según tipo de cada fila
       if (tipo === 'reach') {
         html += '<td>'+valBadge(r[' Funciona pedal de hombre montado  '] || r['Funciona pedal de hombre montado'], false)+'</td>';
         html += '<td>'+valBadge(r[' Funciona elevación e inclinación de uñas  '] || r['Funciona elevación e inclinación de uñas'], false)+'</td>';
