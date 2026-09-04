@@ -129,6 +129,19 @@ var CURRENT_TAB = 'all';
 var FILTER_FECHA = '';
 var FILTER_MAQUINA = 'TODAS';
 var FILTER_TURNO = 'TODOS';
+var FILTER_OPERACION = localStorage.getItem('checklist_operacion') || 'TODAS';
+
+// Busca la columna "Operación" tolerando variantes de espacios/tildes que
+// suele meter Google Forms/Sheets al exportar (mismo criterio que ya se usa
+// para "N° de Máquina" mas abajo).
+function getOperacion(r){
+  return (r['Operación'] || r[' Operación '] || r['  Operación  '] || r['Operacion'] || r[' Operacion '] || r['Operación '] || r[' Operación'] || '').trim();
+}
+function setFilterOperacion(v){
+  FILTER_OPERACION = v;
+  localStorage.setItem('checklist_operacion', v); // recordar la eleccion para la proxima vez que se abra
+  render();
+}
 
 // ── CSV PARSER ───────────────────────────────────────────────────────────────
 function parseCSV(text) {
@@ -256,6 +269,7 @@ function getFiltered() {
     if (CURRENT_TAB === 'alertas' && !r._falla) return false;
     if (FILTER_MAQUINA !== 'TODAS' && (r['  N° de Máquina  '] || r['N° de Máquina'] || r[' N° de Máquina '] || r['N° de Maquina'] || r['Nro de Maquina'] || '').trim() !== FILTER_MAQUINA) return false;
     if (FILTER_TURNO !== 'TODOS' && (r['Turno'] || '') !== FILTER_TURNO) return false;
+    if (FILTER_OPERACION !== 'TODAS' && getOperacion(r) !== FILTER_OPERACION) return false;
     if (FILTER_FECHA) {
       var ts = r['Marca temporal'] || '';
       // ts format: dd/mm/yyyy hh:mm:ss
@@ -278,6 +292,13 @@ function render() {
   var html = '';
 
   // ── Filtros ──
+  var operaciones = ['TODAS'];
+  ALL_DATA.forEach(function(r) {
+    var o = getOperacion(r);
+    if (o && operaciones.indexOf(o) < 0) operaciones.push(o);
+  });
+  operaciones.sort();
+
   var maquinas = ['TODAS'];
   ALL_DATA.forEach(function(r) {
     var m = (r['  N° de Máquina  '] || r['N° de Máquina'] || r[' N° de Máquina '] || r['N° de Maquina'] || r['Nro de Maquina'] || '').trim();
@@ -286,7 +307,11 @@ function render() {
   maquinas.sort();
 
   html += '<div class="filters">';
-  html += '<span class="flt-label">Fecha</span>';
+  html += '<span class="flt-label">Operación</span>';
+  html += '<select onchange="setFilterOperacion(this.value)">';
+  operaciones.forEach(function(o) { html += '<option value="'+o+'"'+(FILTER_OPERACION===o?' selected':'')+'>'+o+'</option>'; });
+  html += '</select>';
+  html += '<span class="flt-label" style="margin-left:8px">Fecha</span>';
   html += '<input type="date" value="'+FILTER_FECHA+'" onchange="FILTER_FECHA=this.value;render()">';
   html += '<span class="flt-label" style="margin-left:8px">Máquina</span>';
   html += '<select onchange="FILTER_MAQUINA=this.value;render()">';
