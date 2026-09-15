@@ -144,32 +144,44 @@ function setFilterOperacion(v){
 }
 
 // ── CSV PARSER ───────────────────────────────────────────────────────────────
+// Parsea el CSV completo como un solo stream de caracteres, no linea por
+// linea — así un salto de línea DENTRO de una respuesta con comillas (ej.
+// alguien escribió una observación en varios renglones) no corta la fila
+// a la mitad. Antes se usaba text.split('\n') primero, lo que rompía
+// justo en ese caso y dejaba filas fantasma con pedazos sueltos.
 function parseCSV(text) {
-  var lines = text.split('\n');
-  if (!lines.length) return [];
-  var headers = parseCSVLine(lines[0]);
+  var filas = [];
+  var filaActual = [];
+  var celda = '';
+  var inQ = false;
+  for (var i = 0; i < text.length; i++) {
+    var c = text[i];
+    if (c === '"') {
+      if (inQ && text[i+1] === '"') { celda += '"'; i++; } // comilla escapada ("")
+      else { inQ = !inQ; }
+    } else if (c === ',' && !inQ) {
+      filaActual.push(celda); celda = '';
+    } else if ((c === '\n' || c === '\r') && !inQ) {
+      if (c === '\r' && text[i+1] === '\n') i++; // CRLF junto
+      filaActual.push(celda); celda = '';
+      if (filaActual.length > 1 || filaActual[0] !== '') filas.push(filaActual);
+      filaActual = [];
+    } else {
+      celda += c;
+    }
+  }
+  if (celda !== '' || filaActual.length) { filaActual.push(celda); filas.push(filaActual); }
+
+  if (!filas.length) return [];
+  var headers = filas[0];
   var rows = [];
-  for (var i = 1; i < lines.length; i++) {
-    var line = lines[i].trim();
-    if (!line) continue;
-    var cols = parseCSVLine(line);
+  for (var j = 1; j < filas.length; j++) {
+    var cols = filas[j];
     var obj = {};
     headers.forEach(function(h, idx) { obj[h.trim()] = (cols[idx] || '').trim(); });
     rows.push(obj);
   }
   return rows;
-}
-
-function parseCSVLine(line) {
-  var result = [], cur = '', inQ = false;
-  for (var i = 0; i < line.length; i++) {
-    var c = line[i];
-    if (c === '"') { inQ = !inQ; }
-    else if (c === ',' && !inQ) { result.push(cur); cur = ''; }
-    else { cur += c; }
-  }
-  result.push(cur);
-  return result;
 }
 
 function fmtFecha(ts) {
