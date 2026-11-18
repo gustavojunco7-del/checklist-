@@ -137,6 +137,18 @@ var FILTER_OPERACION = localStorage.getItem('checklist_operacion') || 'TODAS';
 function getOperacion(r){
   return (r['Operación'] || r[' Operación '] || r['  Operación  '] || r['Operacion'] || r[' Operacion '] || r['Operación '] || r[' Operación'] || '').trim();
 }
+// N° de máquina de una fila, tolerando las variantes de encabezado que exporta Google Sheets.
+function getMaquina(r){
+  return (r['  N° de Máquina  '] || r['N° de Máquina'] || r[' N° de Máquina '] || r['N° de Maquina'] || r['Nro de Maquina'] || '').trim();
+}
+// Devuelve la configuración del tipo de equipo al que pertenece el N° de máquina (o null si no está en ninguna lista).
+function sheetPorMaquina(num){
+  if (!num) return null;
+  for (var i = 0; i < SHEETS.length; i++) {
+    if (SHEETS[i].maquinas.indexOf(num) >= 0) return SHEETS[i];
+  }
+  return null;
+}
 function setFilterOperacion(v){
   FILTER_OPERACION = v;
   localStorage.setItem('checklist_operacion', v); // recordar la eleccion para la proxima vez que se abra
@@ -242,11 +254,15 @@ async function loadAll() {
       var text = await r.text();
       var rows = parseCSV(text);
       rows.forEach(function(row) {
-        row._tipo = sheet.tipo;
-        row._sheetName = sheet.name;
-        row._puntos = sheet.puntos;
-        row._noExcl = sheet.noExcluyentes;
-        row._falla = tieneFalla(row, sheet.puntos, sheet.noExcluyentes);
+        // El tipo de equipo lo define el N° de máquina (lista 'maquinas' de cada tipo).
+        // La hoja de origen solo se usa de respaldo si la máquina no está en ninguna lista.
+        // Así una máquina REACH no queda como "Zorras" aunque la respuesta llegue por otra hoja.
+        var owner = sheetPorMaquina(getMaquina(row)) || sheet;
+        row._tipo = owner.tipo;
+        row._sheetName = owner.name;
+        row._puntos = owner.puntos;
+        row._noExcl = owner.noExcluyentes;
+        row._falla = tieneFalla(row, owner.puntos, owner.noExcluyentes);
       });
       ALL_DATA = ALL_DATA.concat(rows);
     } catch(e) {
